@@ -4,9 +4,9 @@
  * @license MIT
  */
 
-/// <reference types="tree-sitter-cli/dsl" />
+<reference types="tree-sitter-cli/dsl" />
 // @ts-check
-  /* eslint-enable no-multi-spaces */
+/* eslint-enable no-multi-spaces */
 
 module.exports = grammar({
   name: 'xpo',
@@ -17,8 +17,14 @@ module.exports = grammar({
     /[ \t]+/,
   ],
 
+  externals: $ => [
+    $._indent,
+    $._dedent,
+    $._newline,
+  ],
+
   rules: {
-    source_file: $ => 
+    source_file: $ =>
       seq(
         /Exportfile for AOT version 1\.0 or later[ \t\n\r]*/,
         /Formatversion: 1[ \t\n\r]*/,
@@ -31,7 +37,7 @@ module.exports = grammar({
               $.tag),
             /[ \t\n\r]*/))),
 
-    tag: $ => 
+    tag: $ =>
       seq(
         $.name,
         /[ \t]*/,

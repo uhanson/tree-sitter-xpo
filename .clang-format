@@ -1,0 +1,6 @@
+AlignAfterOpenBracket: BlockIndent
+BinPackParametersStyle: AlwaysOnePerLine
+BinPackParameters: true
+BreakBeforeBraces: Attach
+IndentWidth: 4
+UseTab: Never
