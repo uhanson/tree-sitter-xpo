@@ -15,9 +15,7 @@ static inline void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
 
 static inline void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
 
-bool tree_sitter_xpo_external_scanner_scan(
-    void *payload, TSLexer *lexer, const bool *valid_symbols
-) {
+bool tree_sitter_xpo_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
     Scanner *scanner = (Scanner *)payload;
 
     lexer->mark_end(lexer);
@@ -39,8 +37,7 @@ bool tree_sitter_xpo_external_scanner_scan(
             indent_length += 8;
             skip(lexer);
         } else if (lexer->lookahead == ';' &&
-                   (valid_symbols[INDENT] || valid_symbols[DEDENT] ||
-                    valid_symbols[NEWLINE])) {
+                   (valid_symbols[INDENT] || valid_symbols[DEDENT] || valid_symbols[NEWLINE])) {
             // If we haven't found an EOL yet,
             // then this is a comment after an expression:
             //   foo = bar # comment
@@ -67,8 +64,7 @@ bool tree_sitter_xpo_external_scanner_scan(
         if (scanner->indents.size > 0) {
             uint16_t current_indent_length = *array_back(&scanner->indents);
 
-            if (valid_symbols[INDENT] &&
-                indent_length > current_indent_length) {
+            if (valid_symbols[INDENT] && indent_length > current_indent_length) {
                 array_push(&scanner->indents, indent_length);
                 lexer->result_symbol = INDENT;
                 return true;
@@ -76,8 +72,7 @@ bool tree_sitter_xpo_external_scanner_scan(
 
             bool next_tok_is_string_start = lexer->lookahead == '#';
 
-            if (valid_symbols[DEDENT] &&
-                indent_length < current_indent_length) {
+            if (valid_symbols[DEDENT] && indent_length < current_indent_length) {
                 array_pop(&scanner->indents);
                 lexer->result_symbol = DEDENT;
                 return true;
@@ -93,16 +88,13 @@ bool tree_sitter_xpo_external_scanner_scan(
     return false;
 }
 
-unsigned
-tree_sitter_python_external_scanner_serialize(void *payload, char *buffer) {
+unsigned tree_sitter_xpo_external_scanner_serialize(void *payload, char *buffer) {
     Scanner *scanner = (Scanner *)payload;
 
     size_t size = 0;
 
     uint32_t iter = 1;
-    for (; iter < scanner->indents.size &&
-           size < TREE_SITTER_SERIALIZATION_BUFFER_SIZE;
-         ++iter) {
+    for (; iter < scanner->indents.size && size < TREE_SITTER_SERIALIZATION_BUFFER_SIZE; ++iter) {
         uint16_t indent_value = *array_get(&scanner->indents, iter);
         buffer[size++] = (char)(indent_value & 0xFF);
         buffer[size++] = (char)((indent_value >> 8) & 0xFF);
@@ -111,9 +103,7 @@ tree_sitter_python_external_scanner_serialize(void *payload, char *buffer) {
     return size;
 }
 
-void tree_sitter_python_external_scanner_deserialize(
-    void *payload, const char *buffer, unsigned length
-) {
+void tree_sitter_xpo_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {
     Scanner *scanner = (Scanner *)payload;
 
     array_delete(&scanner->indents);
@@ -123,21 +113,20 @@ void tree_sitter_python_external_scanner_deserialize(
         size_t size = 0;
 
         for (; size + 1 < length; size += 2) {
-            uint16_t indent_value = (unsigned char)buffer[size] |
-                                    ((unsigned char)buffer[size + 1] << 8);
+            uint16_t indent_value = (unsigned char)buffer[size] | ((unsigned char)buffer[size + 1] << 8);
             array_push(&scanner->indents, indent_value);
         }
     }
 }
 
-void *tree_sitter_python_external_scanner_create() {
+void *tree_sitter_xpo_external_scanner_create() {
     Scanner *scanner = calloc(1, sizeof(Scanner));
     array_init(&scanner->indents);
-    tree_sitter_python_external_scanner_deserialize(scanner, NULL, 0);
+    tree_sitter_xpo_external_scanner_deserialize(scanner, NULL, 0);
     return scanner;
 }
 
-void tree_sitter_python_external_scanner_destroy(void *payload) {
+void tree_sitter_xpo_external_scanner_destroy(void *payload) {
     Scanner *scanner = (Scanner *)payload;
     array_delete(&scanner->indents);
     free(scanner);

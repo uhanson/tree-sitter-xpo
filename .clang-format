@@ -2,5 +2,6 @@ AlignAfterOpenBracket: BlockIndent
 BinPackParametersStyle: AlwaysOnePerLine
 BinPackParameters: true
 BreakBeforeBraces: Attach
+ColumnLimit: 120
 IndentWidth: 4
 UseTab: Never

@@ -4,7 +4,8 @@
  * @license MIT
  */
 
-<reference types="tree-sitter-cli/dsl" />
+// @ts-ignore
+// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 /* eslint-enable no-multi-spaces */
 
@@ -14,7 +15,7 @@ module.exports = grammar({
   extras: $ => [
     /\uFEFF/,
     /\uFFEF/,
-    /[ \t]+/,
+    /\s/,
   ],
 
   externals: $ => [
@@ -24,33 +25,38 @@ module.exports = grammar({
   ],
 
   rules: {
-    source_file: $ =>
-      seq(
-        /Exportfile for AOT version 1\.0 or later[ \t\n\r]*/,
-        /Formatversion: 1[ \t\n\r]*/,
-        repeat(
-          seq(
-            choice(
-              $.comment,
-              $.delimiter,
-              seq('#', $.text),
-              $.tag),
-            /[ \t\n\r]*/))),
+    source_file: $ => seq(
+      /Exportfile for AOT version 1\.0 or later[ \t\n\r]*/,
+      /Formatversion: 1[ \t\n\r]*/,
+      repeat(
+        seq(
+          choice(
+            $.comment, 
+            $.delimiter, 
+            $._tag),
+          $._newline))),
 
-    tag: $ =>
-      seq(
-        $.name,
-        /[ \t]*/,
-        $.value),
+    _tag: $ => choice($.text, $.tag),
 
-    text: _ => /[^\n\r]*/,
+    text: $ => /#[^\n\r]*/,
+
+    tag: $ => 
+      seq(
+        $.name, optional(seq(/\s+/, $.value)), $._newline, 
+        optional($.subs)),
+
+    subs: $ => 
+      seq(
+        $._indent,
+        repeat($._tag),
+        $._dedent),
 
     comment: _ => /;[^\n\r]*/,
 
     delimiter: _ => /\*\*\*[^\n\r]*/,
 
-    name: _ => /[A-Za-z0-9:*]+/,
+    name: _ => /[A-Za-z0-9:*_]+/,
 
-    value: $ => /[^\n\r]*/,
+    value: _ => /[^\n\r]*/,
   }
 });
