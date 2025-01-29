@@ -12,50 +12,48 @@
 module.exports = grammar({
   name: 'xpo',
 
-  extras: $ => [
-    /\uFEFF/,
-    /\uFFEF/,
-    /\s/,
-  ],
-
   externals: $ => [
     $._indent,
     $._dedent,
     $._newline,
+    $._whitespace,
+    $._error_sentinel,
+  ],
+
+  extras: $ => [
+    /\uFEFF/,
+    /\uFFEF/,
+    $._whitespace,
   ],
 
   rules: {
-    source_file: $ => seq(
-      /Exportfile for AOT version 1\.0 or later[ \t\n\r]*/,
-      /Formatversion: 1[ \t\n\r]*/,
-      repeat(
-        seq(
-          choice(
-            $.comment, 
-            $.delimiter, 
-            $._tag),
-          $._newline))),
+    file: $ => seq(
+      /Exportfile for AOT version 1\.0 or later/,
+      /Formatversion: 1/,
+      repeat(seq(
+        choice(
+          $.comment,
+          $.delimiter,
+          $.tag)))),
 
-    _tag: $ => choice($.text, $.tag),
+    tag: $ => seq(
+      $.ident,
+      $.value,
+//      $._newline,
+      optional($.subs)),
 
-    text: $ => /#[^\n\r]*/,
+    subs: $ => seq(
+      $._indent,
+      repeat(choice($.text, $.tag)),
+      $._dedent),
 
-    tag: $ => 
-      seq(
-        $.name, optional(seq(/\s+/, $.value)), $._newline, 
-        optional($.subs)),
-
-    subs: $ => 
-      seq(
-        $._indent,
-        repeat($._tag),
-        $._dedent),
+    text: _ => /#[^\n\r]*/,
 
     comment: _ => /;[^\n\r]*/,
 
     delimiter: _ => /\*\*\*[^\n\r]*/,
 
-    name: _ => /[A-Za-z0-9:*_]+/,
+    ident: _ => /[A-Za-z0-9:*_]+/,
 
     value: _ => /[^\n\r]*/,
   }
