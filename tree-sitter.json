@@ -20,7 +20,7 @@
       }
     ],
     "links": {
-      "repository": "https://github.com/tree-sitter/tree-sitter-xpo"
+      "repository": "https://github.com/uhanson/tree-sitter-xpo"
     }
   },
   "bindings": {
