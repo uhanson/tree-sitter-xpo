@@ -1,4 +1,7 @@
-AlignAfterOpenBracket: BlockIndent
+AlignAfterOpenBracket: true
+AllowShortBlocksOnASingleLine: true
+BracketAlignmentStyle: BlockIndent
+BinPackArguments: false
 BinPackParametersStyle: AlwaysOnePerLine
 BinPackParameters: true
 BreakBeforeBraces: Attach
