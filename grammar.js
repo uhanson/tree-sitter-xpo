@@ -15,6 +15,7 @@ module.exports = grammar({
   externals: $ => [
     $._indent,
     $._dedent,
+    $._nbsp,
     $._newline,
     $._whitespace,
     $._error_sentinel,
@@ -28,18 +29,18 @@ module.exports = grammar({
 
   rules: {
     file: $ => seq(
-      /Exportfile for AOT version 1\.0 or later/,
-      /Formatversion: 1/,
+      optional(/Exportfile for AOT version 1\.0 or later/),
+      optional(/Formatversion: 1/),
       repeat(seq(
         choice(
           $.comment,
           $.delimiter,
-          $.tag)))),
+          $.tag),
+        $._newline))),
 
     tag: $ => seq(
       $.ident,
-      $.value,
-//      $._newline,
+      optional(seq($._nbsp, $.value)),
       optional($.subs)),
 
     subs: $ => seq(
