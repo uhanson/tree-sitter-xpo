@@ -12,7 +12,6 @@ enum TokenType {
 
 typedef struct {
     Array(uint32_t) indents;
-    int row;
 } Scanner;
 
 static inline void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
@@ -37,7 +36,6 @@ bool tree_sitter_xpo_external_scanner_scan(void *payload, TSLexer *lexer, const 
         if (lexer->lookahead == '\n') {
             found_end_of_line = true;
             white_space = true;
-            scanner->row++;
             current_indent = 0;
             nbsp = false;
             skip(lexer);
@@ -115,9 +113,6 @@ unsigned tree_sitter_xpo_external_scanner_serialize(void *payload, char *buffer)
 
     size_t size = 0;
 
-    buffer[size++] = (char)(scanner->row & 0xFF);
-    buffer[size++] = (char)((scanner->row >> 8) & 0xFF);
-
     uint32_t iter = 1;
     for (; iter < scanner->indents.size && size < TREE_SITTER_SERIALIZATION_BUFFER_SIZE; ++iter) {
         uint16_t indent_value = *array_get(&scanner->indents, iter);
@@ -134,11 +129,6 @@ void tree_sitter_xpo_external_scanner_deserialize(void *payload, const char *buf
     if (length > 0) {
         size_t size = 0;
 
-        uint16_t row_value = (unsigned char)buffer[size++];
-        row_value |= ((unsigned char)buffer[size++] << 8);
-
-        scanner->row = row_value;
-
         array_delete(&scanner->indents);
         array_push(&scanner->indents, 0);
 
@@ -152,7 +142,6 @@ void tree_sitter_xpo_external_scanner_deserialize(void *payload, const char *buf
 void *tree_sitter_xpo_external_scanner_create() {
     Scanner *scanner = calloc(1, sizeof(Scanner));
     array_init(&scanner->indents);
-    scanner->row = 1;
     tree_sitter_xpo_external_scanner_deserialize(scanner, NULL, 0);
     return scanner;
 }
