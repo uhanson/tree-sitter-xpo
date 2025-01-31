@@ -32,7 +32,7 @@ bool tree_sitter_xpo_external_scanner_scan(void *payload, TSLexer *lexer, const 
     bool nbsp = true;
     bool white_space = false;
     bool found_end_of_line = false;
-    int current_indent = lexer->get_column(lexer);
+    uint32_t current_indent = lexer->get_column(lexer);
     for (;;) {
         if (lexer->lookahead == '\n') {
             found_end_of_line = true;
@@ -75,7 +75,7 @@ bool tree_sitter_xpo_external_scanner_scan(void *payload, TSLexer *lexer, const 
         }
 
         if (valid_symbols[DEDENT] && scanner->indents.size > 0 && current_indent < last_indent) {
-            array_pop(&scanner->indents);
+            (void) array_pop(&scanner->indents);
             lexer->result_symbol = DEDENT;
             return true;
         }
@@ -90,7 +90,7 @@ bool tree_sitter_xpo_external_scanner_scan(void *payload, TSLexer *lexer, const 
 
     } else if (next_token_is_a_tag && valid_symbols[DEDENT] && current_indent < last_indent &&
                scanner->indents.size > 0) {
-        array_pop(&scanner->indents);
+        (void) array_pop(&scanner->indents);
         lexer->result_symbol = DEDENT;
         return true;
     }

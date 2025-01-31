@@ -1,6 +1,6 @@
 [package]
 name = "tree-sitter-xpo"
-description = "Dynamics AX 2009 Export file format"
+description = "Dynamics Ax 2009 Export file format"
 version = "0.1.0"
 authors = ["Andrey Anikin <andrey.anikin@gmail.com>"]
 license = "MIT"
