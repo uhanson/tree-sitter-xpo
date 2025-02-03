@@ -18,7 +18,6 @@ module.exports = grammar({
     $._nbsp,
     $._newline,
     $._whitespace,
-    $._error_sentinel,
   ],
 
   extras: $ => [

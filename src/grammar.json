@@ -188,10 +188,6 @@
     {
       "type": "SYMBOL",
       "name": "_whitespace"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_error_sentinel"
     }
   ],
   "inline": [],

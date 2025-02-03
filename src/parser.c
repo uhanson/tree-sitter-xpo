@@ -7,10 +7,10 @@
 #define LANGUAGE_VERSION 14
 #define STATE_COUNT 31
 #define LARGE_STATE_COUNT 2
-#define SYMBOL_COUNT 19
+#define SYMBOL_COUNT 18
 #define ALIAS_COUNT 0
-#define TOKEN_COUNT 14
-#define EXTERNAL_TOKEN_COUNT 6
+#define TOKEN_COUNT 13
+#define EXTERNAL_TOKEN_COUNT 5
 #define FIELD_COUNT 0
 #define MAX_ALIAS_SEQUENCE_LENGTH 4
 #define PRODUCTION_ID_COUNT 1
@@ -28,12 +28,11 @@ enum ts_symbol_identifiers {
   sym__nbsp = 10,
   sym__newline = 11,
   sym__whitespace = 12,
-  sym__error_sentinel = 13,
-  sym_file = 14,
-  sym_tag = 15,
-  sym_subs = 16,
-  aux_sym_file_repeat1 = 17,
-  aux_sym_subs_repeat1 = 18,
+  sym_file = 13,
+  sym_tag = 14,
+  sym_subs = 15,
+  aux_sym_file_repeat1 = 16,
+  aux_sym_subs_repeat1 = 17,
 };
 
 static const char * const ts_symbol_names[] = {
@@ -50,7 +49,6 @@ static const char * const ts_symbol_names[] = {
   [sym__nbsp] = "_nbsp",
   [sym__newline] = "_newline",
   [sym__whitespace] = "_whitespace",
-  [sym__error_sentinel] = "_error_sentinel",
   [sym_file] = "file",
   [sym_tag] = "tag",
   [sym_subs] = "subs",
@@ -72,7 +70,6 @@ static const TSSymbol ts_symbol_map[] = {
   [sym__nbsp] = sym__nbsp,
   [sym__newline] = sym__newline,
   [sym__whitespace] = sym__whitespace,
-  [sym__error_sentinel] = sym__error_sentinel,
   [sym_file] = sym_file,
   [sym_tag] = sym_tag,
   [sym_subs] = sym_subs,
@@ -130,10 +127,6 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .named = true,
   },
   [sym__whitespace] = {
-    .visible = false,
-    .named = true,
-  },
-  [sym__error_sentinel] = {
     .visible = false,
     .named = true,
   },
@@ -661,7 +654,6 @@ static const uint16_t ts_parse_table[LARGE_STATE_COUNT][SYMBOL_COUNT] = {
     [sym__nbsp] = ACTIONS(1),
     [sym__newline] = ACTIONS(1),
     [sym__whitespace] = ACTIONS(3),
-    [sym__error_sentinel] = ACTIONS(1),
   },
   [1] = {
     [sym_file] = STATE(23),
@@ -1043,7 +1035,6 @@ enum ts_external_scanner_symbol_identifiers {
   ts_external_token__nbsp = 2,
   ts_external_token__newline = 3,
   ts_external_token__whitespace = 4,
-  ts_external_token__error_sentinel = 5,
 };
 
 static const TSSymbol ts_external_scanner_symbol_map[EXTERNAL_TOKEN_COUNT] = {
@@ -1052,7 +1043,6 @@ static const TSSymbol ts_external_scanner_symbol_map[EXTERNAL_TOKEN_COUNT] = {
   [ts_external_token__nbsp] = sym__nbsp,
   [ts_external_token__newline] = sym__newline,
   [ts_external_token__whitespace] = sym__whitespace,
-  [ts_external_token__error_sentinel] = sym__error_sentinel,
 };
 
 static const bool ts_external_scanner_states[9][EXTERNAL_TOKEN_COUNT] = {
@@ -1062,7 +1052,6 @@ static const bool ts_external_scanner_states[9][EXTERNAL_TOKEN_COUNT] = {
     [ts_external_token__nbsp] = true,
     [ts_external_token__newline] = true,
     [ts_external_token__whitespace] = true,
-    [ts_external_token__error_sentinel] = true,
   },
   [2] = {
     [ts_external_token__whitespace] = true,

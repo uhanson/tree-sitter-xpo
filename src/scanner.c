@@ -14,9 +14,7 @@ enum TokenType {
     DEDENT,
     NBSP,
     NEWLINE,
-    WHITESPACE,
-    ERROR_SENTINEL,
-};
+    WHITESPACE};
 
 typedef struct {
     uint32_t last_indent;
@@ -80,13 +78,12 @@ bool tree_sitter_xpo_external_scanner_scan(void *payload, TSLexer *lexer, const 
     fprintf(stderr, "% 3d/% 3d (% 3d): ", scanner->row, current_indent, scanner->last_indent);
 
     fprintf(stderr,
-            "%c%c%c%c%c%c|%c%c%c ",
+            "%c%c%c%c%c|%c%c%c ",
             valid_symbols[INDENT] ? 'I' : ' ',
             valid_symbols[DEDENT] ? 'D' : ' ',
             valid_symbols[NBSP] ? 'B' : ' ',
             valid_symbols[NEWLINE] ? 'N' : ' ',
             valid_symbols[WHITESPACE] ? 'W' : ' ',
-            valid_symbols[ERROR_SENTINEL] ? 'E' : ' ',
             white_space ? '_' : ' ',
             found_end_of_line ? '$' : ' ',
             next_token_is_a_comment ? ';' :' ');
@@ -103,21 +100,23 @@ bool tree_sitter_xpo_external_scanner_scan(void *payload, TSLexer *lexer, const 
         fprintf(stderr, " %02x ", lexer->lookahead);
     }
 #endif
-    if (valid_symbols[DEDENT] && current_indent < scanner->last_indent && !next_token_is_a_comment) {
-        scanner->last_indent -= INDENT_SIZE;
-        lexer->result_symbol = DEDENT;
+    if (!next_token_is_a_comment) {
+        if (valid_symbols[DEDENT] && current_indent < scanner->last_indent) {
+            scanner->last_indent -= INDENT_SIZE;
+            lexer->result_symbol = DEDENT;
 #ifdef DEBUG
-        fprintf(stderr, ": DEDENT %d->%d\n", scanner->last_indent, current_indent);
+            fprintf(stderr, ": DEDENT %d->%d\n", scanner->last_indent, current_indent);
 #endif
-        return true;
-    }
+            return true;
+        }
 
-    if (valid_symbols[NEWLINE] && current_indent == scanner->last_indent && !next_token_is_a_comment) {
+        if (valid_symbols[NEWLINE] && current_indent == scanner->last_indent) {
 #ifdef DEBUG
-        fprintf(stderr, ": NEWLINE\n");
+            fprintf(stderr, ": NEWLINE\n");
 #endif
-        lexer->result_symbol = NEWLINE;
-        return true;
+            lexer->result_symbol = NEWLINE;
+            return true;
+        }
     }
 
     if (found_end_of_line) {
@@ -149,7 +148,7 @@ bool tree_sitter_xpo_external_scanner_scan(void *payload, TSLexer *lexer, const 
     }
 
     if (white_space) {
-        if (nbsp && valid_symbols[NBSP]) {
+        if (valid_symbols[NBSP] && nbsp) {
             lexer->result_symbol = NBSP;
 #ifdef DEBUG
             fprintf(stderr, ": NBSP\n");
